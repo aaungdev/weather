@@ -1,9 +1,13 @@
 let map;
+let marker;
 
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 39.8283, lng: -98.5795 }, // Center of the USA
         zoom: 4
+    });
+    marker = new google.maps.Marker({
+        map: map
     });
 }
 
@@ -80,9 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateMap(latitude, longitude) {
         const location = { lat: latitude, lng: longitude };
         map.setCenter(location);
-        new google.maps.Marker({
-            position: location,
-            map: map
-        });
+        marker.setPosition(location);
     }
 });
