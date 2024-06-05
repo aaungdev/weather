@@ -18,6 +18,11 @@ select {
     font-size: 16px;
 }
 
+#map {
+    height: 400px;
+    margin-top: 20px;
+}
+
 #weatherForecast {
     margin-top: 20px;
 }

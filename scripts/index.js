@@ -1,4 +1,11 @@
-"use strict"
+let map;
+
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 39.8283, lng: -98.5795 }, // Center of the USA
+        zoom: 4
+    });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const citySelect = document.getElementById('citySelect');
@@ -24,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
                 const forecastUrl = data.properties.forecast;
                 getWeather(forecastUrl);
+                updateMap(latitude, longitude);
             } catch (error) {
                 console.error('Error fetching weather data:', error);
             }
@@ -66,5 +74,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 </tbody>
             </table>
         `;
+    }
+
+    // Function to update the map location
+    function updateMap(latitude, longitude) {
+        const location = { lat: latitude, lng: longitude };
+        map.setCenter(location);
+        new google.maps.Marker({
+            position: location,
+            map: map
+        });
     }
 });
