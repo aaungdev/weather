@@ -1,6 +1,14 @@
 let map;
 let marker;
 
+function loadGoogleMapsApi() {
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBOshfecc2t88jhluv1OtvPuGN9bYpaVYo&callback=initMap`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+}
+
 function initMap() {
     // Initialize the map
     map = new google.maps.Map(document.getElementById('map'), {
@@ -86,5 +94,5 @@ function displayWeather(forecastArray) {
     `;
 }
 
-// Initialize the map when the API is loaded
-window.initMap = initMap;
+// Load the Google Maps API
+loadGoogleMapsApi();
