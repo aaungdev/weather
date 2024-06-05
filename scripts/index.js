@@ -42,4 +42,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+
+  // Function to display weather forecast
+  function displayWeather(forecastArray) {
+    weatherForecast.innerHTML = "";
+    forecastArray.forEach((period) => {
+      const div = document.createElement("div");
+      div.classList.add("forecast");
+      div.innerHTML = `
+                    <h3>${period.name}</h3>
+                    <p>Temperature: ${period.temperature} ${period.temperatureUnit}</p>
+                    <p>Winds: ${period.windDirection} ${period.windSpeed} mph</p>
+                    <p>${period.shortForecast}</p>
+                `;
+      weatherForecast.appendChild(div);
+    });
+  }
+  
 });
