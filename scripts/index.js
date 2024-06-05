@@ -2,6 +2,7 @@ let map;
 let marker;
 
 function initMap() {
+    // Initialize the map
     map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 39.8283, lng: -98.5795 }, // Center of the USA
         zoom: 4
@@ -9,13 +10,9 @@ function initMap() {
     marker = new google.maps.Marker({
         map: map
     });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const citySelect = document.getElementById('citySelect');
-    const weatherForecast = document.getElementById('weatherForecast');
 
     // Populate the dropdown with cities
+    const citySelect = document.getElementById('citySelect');
     cities.forEach(city => {
         const option = document.createElement('option');
         option.value = JSON.stringify(city);
@@ -41,49 +38,53 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+}
 
-    // Function to get weather forecast
-    async function getWeather(url) {
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            const forecastArray = data.properties.periods;
-            displayWeather(forecastArray);
-        } catch (error) {
-            console.error('Error fetching forecast data:', error);
-        }
+// Function to update the map location
+function updateMap(latitude, longitude) {
+    const location = { lat: latitude, lng: longitude };
+    map.setCenter(location);
+    marker.setPosition(location);
+}
+
+// Function to get weather forecast
+async function getWeather(url) {
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const forecastArray = data.properties.periods;
+        displayWeather(forecastArray);
+    } catch (error) {
+        console.error('Error fetching forecast data:', error);
     }
+}
 
-    // Function to display weather forecast
-    function displayWeather(forecastArray) {
-        weatherForecast.innerHTML = `
-            <table>
-                <thead>
+// Function to display weather forecast
+function displayWeather(forecastArray) {
+    const weatherForecast = document.getElementById('weatherForecast');
+    weatherForecast.innerHTML = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th>Temperature</th>
+                    <th>Winds</th>
+                    <th>Forecast</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${forecastArray.map(period => `
                     <tr>
-                        <th>Period</th>
-                        <th>Temperature</th>
-                        <th>Winds</th>
-                        <th>Forecast</th>
+                        <td>${period.name}</td>
+                        <td>${period.temperature} ${period.temperatureUnit}</td>
+                        <td>${period.windDirection} ${period.windSpeed} mph</td>
+                        <td>${period.shortForecast}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    ${forecastArray.map(period => `
-                        <tr>
-                            <td>${period.name}</td>
-                            <td>${period.temperature} ${period.temperatureUnit}</td>
-                            <td>${period.windDirection} ${period.windSpeed} mph</td>
-                            <td>${period.shortForecast}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-    }
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+}
 
-    // Function to update the map location
-    function updateMap(latitude, longitude) {
-        const location = { lat: latitude, lng: longitude };
-        map.setCenter(location);
-        marker.setPosition(location);
-    }
-});
+// Initialize the map when the API is loaded
+window.initMap = initMap;
