@@ -1,4 +1,5 @@
 "use strict"
+
 const cities = [
     { name: "Benbrook, TX", latitude: 32.6732, longitude: -97.4606 },
     { name: "Denver, CO", latitude: 39.7392, longitude: -104.9903 },
