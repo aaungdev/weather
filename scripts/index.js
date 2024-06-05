@@ -29,4 +29,17 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
+
+  // Function to get weather forecast
+  async function getWeather(url) {
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      const forecastArray = data.properties.periods;
+      displayWeather(forecastArray);
+    } catch (error) {
+      console.error("Error fetching forecast data:", error);
+    }
+  }
+
 });
