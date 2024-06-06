@@ -69,16 +69,11 @@ async function getWeather(url) {
 
 // Function to get image based on weather description
 function getWeatherImage(description) {
-  if (description.toLowerCase().includes("thunderstorm"))
-    return "images/thunderstorm.png";
+  if (description.toLowerCase().includes("thunderstorm")) return "images/thunderstorm.png";
   if (description.toLowerCase().includes("rain")) return "images/rain.png";
   if (description.toLowerCase().includes("snow")) return "images/snow.png";
   if (description.toLowerCase().includes("cloud")) return "images/cloud.png";
-  if (
-    description.toLowerCase().includes("sun") ||
-    description.toLowerCase().includes("clear")
-  )
-    return "images/sun.png";
+  if (description.toLowerCase().includes("sun") || description.toLowerCase().includes("clear")) return "images/sun.png";
   return "images/default.png"; // Default image if no match
 }
 
@@ -97,9 +92,9 @@ function displayWeather(forecastArray) {
     const date = document.createElement("div");
     date.classList.add("date");
     date.innerText = new Date(period.startTime).toLocaleDateString(undefined, {
-      weekday: "long",
-      day: "numeric",
-      month: "short",
+      weekday: 'long',
+      day: 'numeric',
+      month: 'short'
     });
     card.appendChild(date);
 
@@ -112,15 +107,10 @@ function displayWeather(forecastArray) {
     temperature.innerText = `${period.temperature} ${period.temperatureUnit}`;
     card.appendChild(temperature);
 
-    const wind = document.createElement("div");
-    wind.classList.add("wind");
-    wind.innerText = `Wind: ${period.windDirection} ${period.windSpeed} mph`;
-    card.appendChild(wind);
-
-    const description = document.createElement("div");
-    description.classList.add("description");
-    description.innerText = period.shortForecast;
-    card.appendChild(description);
+    const details = document.createElement("div");
+    details.classList.add("details");
+    details.innerText = `Wind: ${period.windDirection} ${period.windSpeed} mph\n${period.shortForecast}`;
+    card.appendChild(details);
 
     forecastContainer.appendChild(card);
   });
