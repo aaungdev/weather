@@ -15,7 +15,6 @@ function loadGoogleMapsApi() {
 }
 
 function initMap() {
-  // Initialize the map
   map = new google.maps.Map(document.getElementById("map"), {
     center: { lat: 39.8283, lng: -98.5795 }, // Center of the USA
     zoom: 4,
@@ -24,7 +23,6 @@ function initMap() {
     map: map,
   });
 
-  // Populate the dropdown with cities
   const citySelect = document.getElementById("citySelect");
   cities.forEach((city) => {
     const option = document.createElement("option");
@@ -33,7 +31,6 @@ function initMap() {
     citySelect.appendChild(option);
   });
 
-  // Event listener for dropdown change
   citySelect.addEventListener("change", async (event) => {
     const selectedCity = JSON.parse(event.target.value);
     if (selectedCity) {
@@ -44,7 +41,8 @@ function initMap() {
         const response = await fetch(stationLookupUrl);
         const data = await response.json();
         const forecastUrl = data.properties.forecast;
-        getWeather(forecastUrl);
+        console.log("Forecast URL:", forecastUrl); // Debugging
+        await getWeather(forecastUrl);
         updateMap(latitude, longitude);
       } catch (error) {
         console.error("Error fetching weather data:", error);
@@ -53,33 +51,34 @@ function initMap() {
   });
 
   document.getElementById("prevPage").addEventListener("click", () => {
-    if (currentPage > 0) {
+    if (currentPage > -2) {
+      // Limit to two weeks in the past
       currentPage--;
       displayWeather(forecastData);
     }
   });
 
   document.getElementById("nextPage").addEventListener("click", () => {
-    if ((currentPage + 1) * daysPerPage < forecastData.length) {
+    if (currentPage < 2) {
+      // Limit to two weeks in the future
       currentPage++;
       displayWeather(forecastData);
     }
   });
 }
 
-// Function to update the map location
 function updateMap(latitude, longitude) {
   const location = { lat: latitude, lng: longitude };
   map.setCenter(location);
   marker.setPosition(location);
 }
 
-// Function to get weather forecast
 async function getWeather(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    forecastData = data.properties.periods; // Store all forecast data
+    forecastData = filterForecast(data.properties.periods); // Store filtered forecast data
+    console.log("Filtered Forecast Data:", forecastData); // Debugging
     currentPage = 0; // Reset to the first page
     displayWeather(forecastData);
   } catch (error) {
@@ -87,27 +86,49 @@ async function getWeather(url) {
   }
 }
 
-// Function to get image based on weather description
+// Function to filter forecast data to get one entry per day
+function filterForecast(forecastArray) {
+  const filteredArray = [];
+  const seenDates = new Set();
+
+  for (const period of forecastArray) {
+    const date = new Date(period.startTime).toLocaleDateString();
+    if (!seenDates.has(date)) {
+      seenDates.add(date);
+      filteredArray.push(period);
+    }
+  }
+
+  return filteredArray;
+}
+
 function getWeatherImage(description) {
-  if (description.toLowerCase().includes("thunderstorm")) return "images/thunderstorm.png";
+  if (description.toLowerCase().includes("thunderstorm"))
+    return "images/thunderstorm.png";
   if (description.toLowerCase().includes("rain")) return "images/rain.png";
   if (description.toLowerCase().includes("snow")) return "images/snow.png";
   if (description.toLowerCase().includes("cloud")) return "images/cloud.png";
-  if (description.toLowerCase().includes("sun") || description.toLowerCase().includes("clear")) return "images/sun.png";
-  return "images/default.png"; // Default image if no match
+  if (
+    description.toLowerCase().includes("sun") ||
+    description.toLowerCase().includes("clear")
+  )
+    return "images/sun.png";
+  return "images/default.png";
 }
 
-// Function to display weather forecast
 function displayWeather(forecastArray) {
   const weatherForecast = document.getElementById("weatherForecast");
-  weatherForecast.innerHTML = ""; // Clear previous content
+  weatherForecast.innerHTML = "";
 
   const forecastContainer = document.createElement("div");
   forecastContainer.classList.add("forecastContainer");
 
-  const start = currentPage * daysPerPage;
+  const start = Math.max((currentPage + 2) * daysPerPage, 0);
   const end = Math.min(start + daysPerPage, forecastArray.length);
   const currentForecast = forecastArray.slice(start, end);
+
+  console.log("Current Page:", currentPage); // Debugging
+  console.log("Displaying Forecast:", currentForecast); // Debugging
 
   currentForecast.forEach((period) => {
     const card = document.createElement("div");
@@ -116,9 +137,9 @@ function displayWeather(forecastArray) {
     const date = document.createElement("div");
     date.classList.add("date");
     date.innerText = new Date(period.startTime).toLocaleDateString(undefined, {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'short'
+      weekday: "long",
+      day: "numeric",
+      month: "short",
     });
     card.appendChild(date);
 
@@ -142,5 +163,4 @@ function displayWeather(forecastArray) {
   weatherForecast.appendChild(forecastContainer);
 }
 
-// Load the Google Maps API
 loadGoogleMapsApi();
