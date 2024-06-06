@@ -1,44 +1,66 @@
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: url('https://images.unsplash.com/photo-1501973801540-537f08e3a707?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxOTcwNjh8MHwxfGFsbHwxfHx8fHx8fHwxNjE2NzAxNTQx&ixlib=rb-1.2.1&q=80&w=1080') no-repeat center center/cover;
+    color: #333;
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 80%;
+    max-width: 800px;
+    margin: 20px;
 }
 
 h1 {
-  text-align: center;
+    margin-bottom: 20px;
 }
 
 label {
-  display: block;
-  margin: 20px 0 10px;
+    display: block;
+    margin: 20px 0 10px;
 }
 
 select {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 20px;
 }
 
 #map {
-  height: 400px;
-  margin-top: 20px;
+    height: 400px;
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 #weatherForecast {
-  margin-top: 20px;
+    margin-top: 20px;
+    text-align: left;
 }
 
 table {
-  width: 100%;
-  border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
 }
 
-th,
-td {
-  padding: 10px;
-  border: 1px solid #ddd;
-  text-align: left;
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
 }
 
 th {
-  background-color: #f2f2f2;
+    background-color: #f2f2f2;
 }
