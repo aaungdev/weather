@@ -60,11 +60,26 @@ async function getWeather(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    const forecastArray = data.properties.periods;
+    const forecastArray = data.properties.periods.slice(0, 7); // Limit to 7 days
     displayWeather(forecastArray);
   } catch (error) {
     console.error("Error fetching forecast data:", error);
   }
+}
+
+// Function to get image based on weather description
+function getWeatherImage(description) {
+  if (description.toLowerCase().includes("thunderstorm"))
+    return "images/thunderstorm.png";
+  if (description.toLowerCase().includes("rain")) return "images/rain.png";
+  if (description.toLowerCase().includes("snow")) return "images/snow.png";
+  if (description.toLowerCase().includes("cloud")) return "images/cloud.png";
+  if (
+    description.toLowerCase().includes("sun") ||
+    description.toLowerCase().includes("clear")
+  )
+    return "images/sun.png";
+  return "images/default.png"; // Default image if no match
 }
 
 // Function to display weather forecast
@@ -72,43 +87,45 @@ function displayWeather(forecastArray) {
   const weatherForecast = document.getElementById("weatherForecast");
   weatherForecast.innerHTML = ""; // Clear previous content
 
-  const table = document.createElement("table");
+  const forecastContainer = document.createElement("div");
+  forecastContainer.classList.add("forecastContainer");
 
-  const thead = document.createElement("thead");
-  const headerRow = document.createElement("tr");
-  ["Period", "Temperature", "Winds", "Forecast"].forEach((headerText) => {
-    const th = document.createElement("th");
-    th.innerText = headerText;
-    headerRow.appendChild(th);
-  });
-  thead.appendChild(headerRow);
-  table.appendChild(thead);
-
-  const tbody = document.createElement("tbody");
   forecastArray.forEach((period) => {
-    const row = document.createElement("tr");
+    const card = document.createElement("div");
+    card.classList.add("forecastCard");
 
-    const periodCell = document.createElement("td");
-    periodCell.innerText = period.name;
-    row.appendChild(periodCell);
+    const date = document.createElement("div");
+    date.classList.add("date");
+    date.innerText = new Date(period.startTime).toLocaleDateString(undefined, {
+      weekday: "long",
+      day: "numeric",
+      month: "short",
+    });
+    card.appendChild(date);
 
-    const tempCell = document.createElement("td");
-    tempCell.innerText = `${period.temperature} ${period.temperatureUnit}`;
-    row.appendChild(tempCell);
+    const icon = document.createElement("img");
+    icon.src = getWeatherImage(period.shortForecast);
+    card.appendChild(icon);
 
-    const windCell = document.createElement("td");
-    windCell.innerText = `${period.windDirection} ${period.windSpeed} mph`;
-    row.appendChild(windCell);
+    const temperature = document.createElement("div");
+    temperature.classList.add("temperature");
+    temperature.innerText = `${period.temperature} ${period.temperatureUnit}`;
+    card.appendChild(temperature);
 
-    const forecastCell = document.createElement("td");
-    forecastCell.innerText = period.shortForecast;
-    row.appendChild(forecastCell);
+    const wind = document.createElement("div");
+    wind.classList.add("wind");
+    wind.innerText = `Wind: ${period.windDirection} ${period.windSpeed} mph`;
+    card.appendChild(wind);
 
-    tbody.appendChild(row);
+    const description = document.createElement("div");
+    description.classList.add("description");
+    description.innerText = period.shortForecast;
+    card.appendChild(description);
+
+    forecastContainer.appendChild(card);
   });
-  table.appendChild(tbody);
 
-  weatherForecast.appendChild(table);
+  weatherForecast.appendChild(forecastContainer);
 }
 
 // Load the Google Maps API
