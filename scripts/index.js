@@ -2,8 +2,6 @@
 
 let map;
 let marker;
-let currentPage = 0;
-const daysPerPage = 7;
 let forecastData = [];
 
 function loadGoogleMapsApi() {
@@ -49,22 +47,6 @@ function initMap() {
       }
     }
   });
-
-  document.getElementById("prevPage").addEventListener("click", () => {
-    if (currentPage > -2) {
-      // Limit to two weeks in the past
-      currentPage--;
-      displayWeather(forecastData);
-    }
-  });
-
-  document.getElementById("nextPage").addEventListener("click", () => {
-    if (currentPage < 2) {
-      // Limit to two weeks in the future
-      currentPage++;
-      displayWeather(forecastData);
-    }
-  });
 }
 
 function updateMap(latitude, longitude) {
@@ -79,7 +61,6 @@ async function getWeather(url) {
     const data = await response.json();
     forecastData = filterForecast(data.properties.periods); // Store filtered forecast data
     console.log("Filtered Forecast Data:", forecastData); // Debugging
-    currentPage = 0; // Reset to the first page
     displayWeather(forecastData);
   } catch (error) {
     console.error("Error fetching forecast data:", error);
@@ -96,6 +77,7 @@ function filterForecast(forecastArray) {
     if (!seenDates.has(date)) {
       seenDates.add(date);
       filteredArray.push(period);
+      if (filteredArray.length >= 7) break; // Limit to 7 days
     }
   }
 
@@ -103,16 +85,11 @@ function filterForecast(forecastArray) {
 }
 
 function getWeatherImage(description) {
-  if (description.toLowerCase().includes("thunderstorm"))
-    return "images/thunderstorm.png";
+  if (description.toLowerCase().includes("thunderstorm")) return "images/thunderstorm.png";
   if (description.toLowerCase().includes("rain")) return "images/rain.png";
   if (description.toLowerCase().includes("snow")) return "images/snow.png";
   if (description.toLowerCase().includes("cloud")) return "images/cloud.png";
-  if (
-    description.toLowerCase().includes("sun") ||
-    description.toLowerCase().includes("clear")
-  )
-    return "images/sun.png";
+  if (description.toLowerCase().includes("sun") || description.toLowerCase().includes("clear")) return "images/sun.png";
   return "images/default.png";
 }
 
@@ -123,23 +100,16 @@ function displayWeather(forecastArray) {
   const forecastContainer = document.createElement("div");
   forecastContainer.classList.add("forecastContainer");
 
-  const start = Math.max((currentPage + 2) * daysPerPage, 0);
-  const end = Math.min(start + daysPerPage, forecastArray.length);
-  const currentForecast = forecastArray.slice(start, end);
-
-  console.log("Current Page:", currentPage); // Debugging
-  console.log("Displaying Forecast:", currentForecast); // Debugging
-
-  currentForecast.forEach((period) => {
+  forecastArray.forEach((period) => {
     const card = document.createElement("div");
     card.classList.add("forecastCard");
 
     const date = document.createElement("div");
     date.classList.add("date");
     date.innerText = new Date(period.startTime).toLocaleDateString(undefined, {
-      weekday: "long",
-      day: "numeric",
-      month: "short",
+      weekday: 'long',
+      day: 'numeric',
+      month: 'short'
     });
     card.appendChild(date);
 
