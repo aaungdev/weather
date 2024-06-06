@@ -56,10 +56,10 @@ function initMap() {
   });
 
   document.getElementById("nextPage").addEventListener("click", () => {
-    if ((currentPage + 1) * daysPerPage < forecastData.length) {
+    // if ((currentPage + 1) * daysPerPage < forecastData.length) {
       currentPage++;
       displayWeather(forecastData);
-    }
+    // }
   });
 }
 
