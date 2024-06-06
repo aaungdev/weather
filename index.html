@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weather</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <script src="scripts/index.js" defer></script>
-</head>
-<body>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
     <h1>Weather Forecast</h1>
     <label for="citySelect">Select a city:</label>
     <select id="citySelect">
-        <option value="">--Select a city--</option>
+      <option value="">--Select a city--</option>
     </select>
     <div id="map"></div>
     <div id="weatherForecast"></div>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOshfecc2t88jhluv1OtvPuGN9bYpaVYo&callback=loadGoogleMapsApi" async defer></script>
+    <script src="scripts/index.js" defer></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOshfecc2t88jhluv1OtvPuGN9bYpaVYo&callback=loadGoogleMapsApi"
+      async
+      defer
+    ></script>
     <script src="scripts/cities.js"></script>
-</body>
+  </body>
 </html>
