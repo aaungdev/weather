@@ -2,6 +2,9 @@
 
 let map;
 let marker;
+let currentPage = 0;
+const daysPerPage = 7;
+let forecastData = [];
 
 function loadGoogleMapsApi() {
   const script = document.createElement("script");
@@ -48,6 +51,20 @@ function initMap() {
       }
     }
   });
+
+  document.getElementById("prevPage").addEventListener("click", () => {
+    if (currentPage > 0) {
+      currentPage--;
+      displayWeather(forecastData);
+    }
+  });
+
+  document.getElementById("nextPage").addEventListener("click", () => {
+    if ((currentPage + 1) * daysPerPage < forecastData.length) {
+      currentPage++;
+      displayWeather(forecastData);
+    }
+  });
 }
 
 // Function to update the map location
@@ -62,30 +79,12 @@ async function getWeather(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    const forecastArray = filterForecast(data.properties.periods);
-    displayWeather(forecastArray);
+    forecastData = data.properties.periods; // Store all forecast data
+    currentPage = 0; // Reset to the first page
+    displayWeather(forecastData);
   } catch (error) {
     console.error("Error fetching forecast data:", error);
   }
-}
-
-// Function to filter forecast data to get one entry per day
-function filterForecast(forecastArray) {
-  const filteredArray = [];
-  const seenDates = new Set();
-  
-  for (const period of forecastArray) {
-    const date = new Date(period.startTime).toLocaleDateString();
-    if (!seenDates.has(date)) {
-      seenDates.add(date);
-      filteredArray.push(period);
-    }
-    if (filteredArray.length >= 7) {
-      break;
-    }
-  }
-  
-  return filteredArray;
 }
 
 // Function to get image based on weather description
@@ -106,7 +105,11 @@ function displayWeather(forecastArray) {
   const forecastContainer = document.createElement("div");
   forecastContainer.classList.add("forecastContainer");
 
-  forecastArray.forEach((period) => {
+  const start = currentPage * daysPerPage;
+  const end = Math.min(start + daysPerPage, forecastArray.length);
+  const currentForecast = forecastArray.slice(start, end);
+
+  currentForecast.forEach((period) => {
     const card = document.createElement("div");
     card.classList.add("forecastCard");
 
