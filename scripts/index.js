@@ -1,3 +1,5 @@
+"use strict";
+
 let map;
 let marker;
 
@@ -60,11 +62,30 @@ async function getWeather(url) {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    const forecastArray = data.properties.periods.slice(0, 7); // Limit to 7 days
+    const forecastArray = filterForecast(data.properties.periods);
     displayWeather(forecastArray);
   } catch (error) {
     console.error("Error fetching forecast data:", error);
   }
+}
+
+// Function to filter forecast data to get one entry per day
+function filterForecast(forecastArray) {
+  const filteredArray = [];
+  const seenDates = new Set();
+  
+  for (const period of forecastArray) {
+    const date = new Date(period.startTime).toLocaleDateString();
+    if (!seenDates.has(date)) {
+      seenDates.add(date);
+      filteredArray.push(period);
+    }
+    if (filteredArray.length >= 7) {
+      break;
+    }
+  }
+  
+  return filteredArray;
 }
 
 // Function to get image based on weather description
